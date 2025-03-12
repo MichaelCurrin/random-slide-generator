@@ -113,7 +113,6 @@
             cursor: pointer;
         }
 
-        /* Slideshow styles */
         .slideshow-button {
             margin-top: 20px;
             margin-bottom: 20px;
@@ -183,32 +182,39 @@
     <div class="container">
         <header>
             <h1>Random Slideshow Generator</h1>
+
         </header>
 
         <div class="form-container">
+
+            <p>Based on the <a href="https://www.powerpointkaraoke.com/">Powerpoint Karaoke</a> idea
+                of presenting slides you've never seen before as an improvised theater game. Enter
+                your own title, get 5 random slides from <a
+                    href="https://picsum.photos/">picsum.photos</a>
+            </p>
+            <br>
             <form id="image-form">
                 <div class="form-group">
                     <div class="form-input">
                         <label for="title">Title:</label>
                         <input type="text" id="slide-title" placeholder="Enter presentation title"
-                            value="My Slideshow" size="30">
+                            value="My Slideshow" size="30" required>
                     </div>
 
-                    <button type="submit" id="generate-btn" style="max-width: 200px;">
-                        Generate Slides</button>
+                    <div>Use the left and right arrow keys to navigate.</div>
+
+                    <div class="slideshow-button">
+                        <button id="start-slideshow" type="button">Start Slideshow</button>
+                    </div>
                 </div>
             </form>
         </div>
 
-        <div class="slideshow-button">
-            <button id="start-slideshow" type="button">Start Slideshow</button>
-        </div>
 
         <div class="gallery" id="image-gallery" style="display:none">
         </div>
     </div>
 
-    <!-- Slideshow overlay -->
     <div class="slideshow-overlay" id="slideshow-overlay">
         <span class="close-slideshow" id="close-slideshow">&times;</span>
         <div class="slideshow-container">
@@ -307,7 +313,10 @@
                 displaySlide(currentImageIndex);
             }
 
-            slideshowButton.addEventListener('click', startSlideshow);
+            slideshowButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                startSlideshow()
+            });
 
             slideshowOverlay.addEventListener('click', function (e) {
                 if (e.target === slideshowOverlay || e.target === slideshowImage || e.target === slideshowText) {
