@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Generator</title>
+    <style>
+        :root {
+            --primary-color: #f13e2d;
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --border-radius: 8px;
+            --spacing: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--spacing);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: var(--spacing);
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: var(--spacing);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: var(--spacing);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+
+        input {
+            padding: 10px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1b2846;
+        }
+
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing);
+            margin-top: var(--spacing);
+            align-items: center;
+            width: 100%;
+        }
+
+        .image-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            margin-bottom: 15px;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .image-container img {
+            display: block;
+            cursor: pointer;
+        }
+
+        /* Slideshow styles */
+        .slideshow-button {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .slideshow-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 1.0);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .slideshow-container {
+            position: relative;
+
+        }
+
+        .slideshow-image {
+            width: 1280px;
+            height: 768px;
+            object-fit: contain;
+        }
+
+        .slideshow-text {
+            color: white;
+            font-size: 3rem;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            color: white;
+        }
+
+        .slideshow-counter {
+            color: white;
+            font-size: 18px;
+        }
+
+        .close-slideshow {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Random Slideshow Generator</h1>
+        </header>
+
+        <div class="form-container">
+            <form id="image-form">
+                <div class="form-group">
+                    <div class="form-input">
+                        <label for="title">Title:</label>
+                        <input type="text" id="slide-title" placeholder="Enter presentation title"
+                            value="My Slideshow" size="30">
+                    </div>
+
+                    <button type="submit" id="generate-btn" style="max-width: 200px;">
+                        Generate Slides</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="slideshow-button">
+            <button id="start-slideshow" type="button">Start Slideshow</button>
+        </div>
+
+        <div class="gallery" id="image-gallery" style="display:none">
+        </div>
+    </div>
+
+    <!-- Slideshow overlay -->
+    <div class="slideshow-overlay" id="slideshow-overlay">
+        <span class="close-slideshow" id="close-slideshow">&times;</span>
+        <div class="slideshow-container">
+            <img id="slideshow-image" class="slideshow-image" src="" alt="Slideshow image"
+                style="display: none;">
+            <div id="slideshow-text" class="slideshow-text"></div>
+            <div class="slideshow-controls">
+                <span id="slideshow-counter" class="slideshow-counter">1/7</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('image-form');
+            const gallery = document.getElementById('image-gallery');
+            const slideshowButton = document.getElementById('start-slideshow');
+            const slideshowOverlay = document.getElementById('slideshow-overlay');
+            const slideshowImage = document.getElementById('slideshow-image');
+            const slideshowText = document.getElementById('slideshow-text');
+            const slideshowCounter = document.getElementById('slideshow-counter');
+            const closeSlideshow = document.getElementById('close-slideshow');
+
+            let currentImageIndex = 0;
+            let slides = [];
+
+
+            function generateSlides(gallery, slides) {
+                const title = document.getElementById('slide-title').value;
+                const width = 1280;
+                const height = 768;
+
+                gallery.innerHTML = '';
+
+                slides.push({ type: 'text', content: `<h1>${title}</h1>` });
+
+                for (let i = 0; i < 5; i++) {
+                    const randomSeed = Math.floor(Math.random() * 1000);
+                    const imageUrl = `https://picsum.photos/${width}/${height}?random=${randomSeed}`;
+
+                    slides.push({ type: 'image', content: imageUrl });
+
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'image-container';
+
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.width = width;
+                    img.height = height;
+                    img.alt = `Random image ${i + 1}`;
+
+                    img.addEventListener('click', () => {
+                        currentImageIndex = i + 1;
+                        displaySlide(currentImageIndex);
+                        slideshowOverlay.style.display = 'flex';
+                    });
+
+                    imageContainer.appendChild(img);
+                    gallery.appendChild(imageContainer);
+                }
+
+                slides.push({ type: 'text', content: '<h1>Thank You!</h1>' });
+            }
+
+            function displaySlide(index) {
+                const slide = slides[index];
+
+                if (slide.type === 'text') {
+                    slideshowImage.style.display = 'none';
+                    slideshowText.style.display = 'block';
+                    slideshowText.innerHTML = slide.content;
+                } else {
+                    slideshowImage.style.display = 'block';
+                    slideshowText.style.display = 'none';
+                    slideshowImage.src = slide.content;
+                }
+
+                slideshowCounter.textContent = `${index + 1}/${slides.length}`;
+            }
+
+            function startSlideshow() {
+                generateSlides(gallery, slides);
+
+                currentImageIndex = 0;
+                displaySlide(currentImageIndex);
+                slideshowOverlay.style.display = 'flex';
+            }
+
+            function nextImage() {
+                currentImageIndex = (currentImageIndex + 1) % slides.length;
+                displaySlide(currentImageIndex);
+            }
+
+            function prevImage() {
+                currentImageIndex = (currentImageIndex - 1 + slides.length) % slides.length;
+                displaySlide(currentImageIndex);
+            }
+
+            slideshowButton.addEventListener('click', startSlideshow);
+
+            slideshowOverlay.addEventListener('click', function (e) {
+                if (e.target === slideshowOverlay || e.target === slideshowImage || e.target === slideshowText) {
+                    nextImage();
+                }
+            });
+
+            closeSlideshow.addEventListener('click', function () {
+                slideshowOverlay.style.display = 'none';
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (slideshowOverlay.style.display === 'flex') {
+                    if (e.key === 'Escape') {
+                        slideshowOverlay.style.display = 'none';
+                    } else if (e.key === 'ArrowRight') {
+                        nextImage();
+                    } else if (e.key === 'ArrowLeft') {
+                        prevImage();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
