@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide Generator</title>
     <style>
         :root {
@@ -18,7 +18,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -37,8 +37,12 @@
         }
 
         h1 {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             color: var(--primary-color);
+        }
+
+        h2 {
+            margin-bottom: 10px;
         }
 
         .container {
@@ -59,7 +63,6 @@
             flex-direction: column;
             gap: 20px;
         }
-
 
         input {
             padding: 10px 15px;
@@ -125,7 +128,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 1.0);
+            background-color: rgba(0, 0, 0, 1);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -134,7 +137,6 @@
 
         .slideshow-container {
             position: relative;
-
         }
 
         .slideshow-image {
@@ -182,44 +184,64 @@
     <div class="container">
         <header>
             <h1>Random Slideshow Generator</h1>
-
+            <p>
+                <a href="https://github.com/MichaelCurrin/random-slide-generator"
+                    title="Go to GitHub repo"><img
+                        src="https://img.shields.io/static/v1?label=MichaelCurrin&message=random-slide-generator&color=blue&logo=github"
+                        alt="MichaelCurrin - random-slide-generator" /></a>
+            </p>
         </header>
 
         <div class="form-container">
-
-            <p>Based on the <a href="https://www.powerpointkaraoke.com/">Powerpoint Karaoke</a> idea
-                of presenting slides you've never seen before as an improvised theater game. Enter
-                your own title, get 5 random slides from <a
-                    href="https://picsum.photos/">picsum.photos</a>
+            <h2>About</h2>
+            <p>
+                Based on the
+                <a href="https://www.powerpointkaraoke.com/">Powerpoint Karaoke</a>
+                idea of presenting slides you've never seen before as an improvised
+                theater game.
             </p>
-            <br>
+            <br />
+            <h2>How to play</h2>
+            <p>
+                Enter your own title. Start the slide show you'll and get 5 random
+                slides (photographs) from
+                <a href="https://picsum.photos/">picsum.photos</a> which you can use
+                to improvise. You can interpret the image however you like from
+                literal to abstract (e.g. a sunrise can represent joy or new
+                beginnings).
+            </p>
+
+            <br />
+            <h2>Play</h2>
             <form id="image-form">
                 <div class="form-group">
                     <div class="form-input">
                         <label for="title">Title:</label>
                         <input type="text" id="slide-title" placeholder="Enter presentation title"
-                            value="My Slideshow" size="30" required>
+                            value="My Slideshow" size="30" required />
                     </div>
 
-                    <div>Use the left and right arrow keys to navigate.</div>
+                    <div>
+                        <i>Tip: Use the left and right arrow keys to navigate.</i>
+                    </div>
 
                     <div class="slideshow-button">
-                        <button id="start-slideshow" type="button">Start Slideshow</button>
+                        <button id="start-slideshow" type="button">
+                            Start Slideshow
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
 
-
-        <div class="gallery" id="image-gallery" style="display:none">
-        </div>
+        <div class="gallery" id="image-gallery" style="display: none"></div>
     </div>
 
     <div class="slideshow-overlay" id="slideshow-overlay">
         <span class="close-slideshow" id="close-slideshow">&times;</span>
         <div class="slideshow-container">
             <img id="slideshow-image" class="slideshow-image" src="" alt="Slideshow image"
-                style="display: none;">
+                style="display: none" />
             <div id="slideshow-text" class="slideshow-text"></div>
             <div class="slideshow-controls">
                 <span id="slideshow-counter" class="slideshow-counter">1/7</span>
@@ -228,67 +250,66 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('image-form');
-            const gallery = document.getElementById('image-gallery');
-            const slideshowButton = document.getElementById('start-slideshow');
-            const slideshowOverlay = document.getElementById('slideshow-overlay');
-            const slideshowImage = document.getElementById('slideshow-image');
-            const slideshowText = document.getElementById('slideshow-text');
-            const slideshowCounter = document.getElementById('slideshow-counter');
-            const closeSlideshow = document.getElementById('close-slideshow');
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("image-form");
+            const gallery = document.getElementById("image-gallery");
+            const slideshowButton = document.getElementById("start-slideshow");
+            const slideshowOverlay = document.getElementById("slideshow-overlay");
+            const slideshowImage = document.getElementById("slideshow-image");
+            const slideshowText = document.getElementById("slideshow-text");
+            const slideshowCounter = document.getElementById("slideshow-counter");
+            const closeSlideshow = document.getElementById("close-slideshow");
 
             let currentImageIndex = 0;
             let slides = [];
 
-
             function generateSlides(gallery, slides) {
-                const title = document.getElementById('slide-title').value;
+                const title = document.getElementById("slide-title").value;
                 const width = 1280;
                 const height = 768;
 
-                gallery.innerHTML = '';
+                gallery.innerHTML = "";
 
-                slides.push({ type: 'text', content: `<h1>${title}</h1>` });
+                slides.push({ type: "text", content: `<h1>${title}</h1>` });
 
                 for (let i = 0; i < 5; i++) {
                     const randomSeed = Math.floor(Math.random() * 1000);
                     const imageUrl = `https://picsum.photos/${width}/${height}?random=${randomSeed}`;
 
-                    slides.push({ type: 'image', content: imageUrl });
+                    slides.push({ type: "image", content: imageUrl });
 
-                    const imageContainer = document.createElement('div');
-                    imageContainer.className = 'image-container';
+                    const imageContainer = document.createElement("div");
+                    imageContainer.className = "image-container";
 
-                    const img = document.createElement('img');
+                    const img = document.createElement("img");
                     img.src = imageUrl;
                     img.width = width;
                     img.height = height;
                     img.alt = `Random image ${i + 1}`;
 
-                    img.addEventListener('click', () => {
+                    img.addEventListener("click", () => {
                         currentImageIndex = i + 1;
                         displaySlide(currentImageIndex);
-                        slideshowOverlay.style.display = 'flex';
+                        slideshowOverlay.style.display = "flex";
                     });
 
                     imageContainer.appendChild(img);
                     gallery.appendChild(imageContainer);
                 }
 
-                slides.push({ type: 'text', content: '<h1>Thank You!</h1>' });
+                slides.push({ type: "text", content: "<h1>Thank You!</h1>" });
             }
 
             function displaySlide(index) {
                 const slide = slides[index];
 
-                if (slide.type === 'text') {
-                    slideshowImage.style.display = 'none';
-                    slideshowText.style.display = 'block';
+                if (slide.type === "text") {
+                    slideshowImage.style.display = "none";
+                    slideshowText.style.display = "block";
                     slideshowText.innerHTML = slide.content;
                 } else {
-                    slideshowImage.style.display = 'block';
-                    slideshowText.style.display = 'none';
+                    slideshowImage.style.display = "block";
+                    slideshowText.style.display = "none";
                     slideshowImage.src = slide.content;
                 }
 
@@ -300,7 +321,7 @@
 
                 currentImageIndex = 0;
                 displaySlide(currentImageIndex);
-                slideshowOverlay.style.display = 'flex';
+                slideshowOverlay.style.display = "flex";
             }
 
             function nextImage() {
@@ -309,32 +330,37 @@
             }
 
             function prevImage() {
-                currentImageIndex = (currentImageIndex - 1 + slides.length) % slides.length;
+                currentImageIndex =
+                    (currentImageIndex - 1 + slides.length) % slides.length;
                 displaySlide(currentImageIndex);
             }
 
-            slideshowButton.addEventListener('click', function (e) {
+            slideshowButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                startSlideshow()
+                startSlideshow();
             });
 
-            slideshowOverlay.addEventListener('click', function (e) {
-                if (e.target === slideshowOverlay || e.target === slideshowImage || e.target === slideshowText) {
+            slideshowOverlay.addEventListener("click", function (e) {
+                if (
+                    e.target === slideshowOverlay ||
+                    e.target === slideshowImage ||
+                    e.target === slideshowText
+                ) {
                     nextImage();
                 }
             });
 
-            closeSlideshow.addEventListener('click', function () {
-                slideshowOverlay.style.display = 'none';
+            closeSlideshow.addEventListener("click", function () {
+                slideshowOverlay.style.display = "none";
             });
 
-            document.addEventListener('keydown', function (e) {
-                if (slideshowOverlay.style.display === 'flex') {
-                    if (e.key === 'Escape') {
-                        slideshowOverlay.style.display = 'none';
-                    } else if (e.key === 'ArrowRight') {
+            document.addEventListener("keydown", function (e) {
+                if (slideshowOverlay.style.display === "flex") {
+                    if (e.key === "Escape") {
+                        slideshowOverlay.style.display = "none";
+                    } else if (e.key === "ArrowRight") {
                         nextImage();
-                    } else if (e.key === 'ArrowLeft') {
+                    } else if (e.key === "ArrowLeft") {
                         prevImage();
                     }
                 }
